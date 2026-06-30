@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <title>UMCSSA 活动签到系统</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, "Noto Sans SC", sans-serif;
+      color: #1f2937;
+      background:
+        linear-gradient(rgba(255,255,255,0.94), rgba(255,255,255,0.94)),
+        repeating-linear-gradient(0deg, #fee2e2 0, #fee2e2 1px, transparent 1px, transparent 32px),
+        repeating-linear-gradient(90deg, #fee2e2 0, #fee2e2 1px, transparent 1px, transparent 32px);
+    }
+
+    .navbar {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 72px;
+      background: rgba(255,255,255,0.85);
+      border-bottom: 1px solid #e5e7eb;
+      backdrop-filter: blur(12px);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 24px;
+      font-weight: 700;
+      text-decoration: none;
+      color: #b91c1c;
+    }
+
+    .logo img {
+      height: 42px;
+      width: auto;
+    }
+
+    .nav a {
+      margin-left: 48px;
+      text-decoration: none;
+      color: #6b7280;
+      font-size: 15px;
+    }
+
+    .nav a:hover,
+    .nav a.active {
+      color: #b91c1c;
+      font-weight: 600;
+    }
+
+    .page {
+      min-height: calc(100vh - 72px);
+      padding: 100px 18%;
+      position: relative;
+    }
+
+    .label {
+      font-size: 14px;
+      letter-spacing: 2px;
+      color: #9ca3af;
+      margin-bottom: 20px;
+    }
+
+    .title {
+      font-size: 48px;
+      line-height: 1.35;
+      font-weight: 300;
+      letter-spacing: 6px;
+      background: linear-gradient(90deg, #991b1b, #ef4444, #fca5a5);
+      -webkit-background-clip: text;
+      color: transparent;
+      margin-bottom: 56px;
+    }
+
+    .card {
+      max-width: 560px;
+      background: rgba(255,255,255,0.82);
+      border: 1px solid #f3d1d1;
+      border-radius: 18px;
+      padding: 36px;
+      box-shadow: 0 20px 60px rgba(185, 28, 28, 0.08);
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #1f2937;
+    }
+
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 14px 16px;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      font-size: 16px;
+      outline: none;
+      background: white;
+    }
+
+    input:focus {
+      border-color: #b91c1c;
+      box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.12);
+    }
+
+    button {
+      width: 100%;
+      padding: 14px 20px;
+      border: none;
+      border-radius: 10px;
+      background: #b91c1c;
+      color: white;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #991b1b;
+    }
+
+    #result {
+      margin-top: 24px;
+      line-height: 1.8;
+      font-size: 16px;
+      color: #374151;
+      white-space: pre-line;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 24px;
+      color: #b91c1c;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .side-text {
+      position: fixed;
+      right: 36px;
+      top: 120px;
+      writing-mode: vertical-rl;
+      font-size: 56px;
+      font-weight: 800;
+      color: rgba(185, 28, 28, 0.08);
+      letter-spacing: 4px;
+    }
+
+    .left-bar {
+      position: fixed;
+      left: 76px;
+      top: 320px;
+      width: 18px;
+      height: 240px;
+      background: #b91c1c;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="navbar">
+    <a class="logo" href="index.html">
+      <img src="assets/umcssa_logo.png" alt="UMCSSA Logo">
+      <span>UMCSSA Platform</span>
+    </a>
+
+    <nav class="nav">
+      <a class="active" href="checkin.html">活动签到</a>
+      <a href="#">接机申请</a>
+    </nav>
+  </header>
+
+  <div class="side-text">CHECK IN</div>
+  <div class="left-bar"></div>
+
+  <main class="page">
+    <div class="label">EVENT CHECK-IN</div>
+
+    <h1 class="title" id="eventTitle">UMCSSA 活动签到系统</h1>
+
+    <section class="card">
+      <div class="form-group">
+        <label for="email">UM 电子邮箱</label>
+        <input id="email" type="email" placeholder="abc123@umich.edu" />
+      </div>
+
+      <div class="form-group">
+        <label for="guestCount">实际随行人员数量</label>
+        <input id="guestCount" type="number" min="0" max="1" value="0" />
+      </div>
+
+      <button onclick="checkIn()">签到</button>
+
+      <p id="result"></p>
+
+      <a class="back-link" href="index.html">← 回到活动列表</a>
+    </section>
+  </main>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const eventId = params.get("event");
+
+    const eventNames = {
+      beijing: "2026 新生见面会（北京场）",
+      shanghai: "2026 新生见面会（上海场）",
+      shenzhen: "2026 新生见面会（深圳场）",
+      spring_festival_gala: "春晚签到"
+    };
+
+    document.getElementById("eventTitle").innerText =
+      eventNames[eventId] || "UMCSSA 活动签到系统";
+
+    async function checkIn() {
+      const email = document.getElementById("email").value.trim();
+      const guestCount = Number(document.getElementById("guestCount").value);
+      const result = document.getElementById("result");
+
+      if (!email) {
+        result.innerText = "请输入您的 UM 电子邮箱。";
+        return;
+      }
+
+      try {
+        const response = await fetch("http://127.0.0.1:8000/checkin", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            event_id: eventId,
+            email: email,
+            guest_count: guestCount
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          result.innerText = `${data.message}
+欢迎参会，${data.name}。
+实际随行人员数量：${data.guest_count}
+总入场人数：${data.total_count}`;
+        } else {
+          result.innerText = `${data.message}`;
+        }
+      } catch (error) {
+        result.innerText = "服务器连接失败，请联系现场工作人员。";
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,49 +1,146 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh">
 <head>
   <meta charset="UTF-8" />
-  <title>UMCSSA 签到系统</title>
-</head>
-<body>
-  <h1>2026 UMCSSA 新生见面会（北京场）签到</h1>
-
-  <p>请输入您的 UM 电子邮箱。</p>
-
-  <input id="email" type="email" placeholder="abc123@umich.edu" />
-  <button onclick="checkIn()">签到</button>
-
-  <p id="result"></p>
-
-  <script>
-    async function checkIn() {
-      const email = document.getElementById("email").value;
-      const result = document.getElementById("result");
-
-      if (!email) {
-        result.innerText = "请输入您的 UM 电子邮箱。";
-        return;
-      }
-
-      try {
-        const response = await fetch("http://127.0.0.1:8000/checkin", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ email: email })
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-          result.innerText = `✅ ${data.message} 欢迎参会，${data.name}。`;
-        } else {
-          result.innerText = `❌ ${data.message}`;
-        }
-      } catch (error) {
-        result.innerText = "服务器故障，请重试。";
-      }
+  <title>UMCSSA Platform</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, "Noto Sans SC", sans-serif;
+      color: #1f2937;
+      background:
+        linear-gradient(rgba(255,255,255,0.92), rgba(255,255,255,0.92)),
+        repeating-linear-gradient(0deg, #fee2e2 0, #fee2e2 1px, transparent 1px, transparent 32px),
+        repeating-linear-gradient(90deg, #fee2e2 0, #fee2e2 1px, transparent 1px, transparent 32px);
     }
-  </script>
+
+    .navbar {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 72px;
+      background: rgba(255,255,255,0.85);
+      border-bottom: 1px solid #e5e7eb;
+      backdrop-filter: blur(12px);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 24px;
+      font-weight: 700;
+      text-decoration: none;
+      color: #b91c1c;
+    }
+
+    .logo img {
+      height: 42px;
+      width: auto;
+    }
+
+    .nav a {
+      margin-left: 48px;
+      text-decoration: none;
+      color: #6b7280;
+      font-size: 15px;
+    }
+
+    .nav a:hover {
+      color: #b91c1c;
+    }
+
+    .hero {
+      min-height: calc(100vh - 72px);
+      position: relative;
+      padding: 120px 18%;
+    }
+
+    .label {
+      font-size: 14px;
+      letter-spacing: 2px;
+      color: #9ca3af;
+      margin-bottom: 20px;
+    }
+
+    .title {
+      font-size: 56px;
+      line-height: 1.35;
+      font-weight: 300;
+      letter-spacing: 8px;
+      background: linear-gradient(90deg, #991b1b, #ef4444, #fca5a5);
+      -webkit-background-clip: text;
+      color: transparent;
+      margin-bottom: 80px;
+    }
+
+    .section-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 24px;
+    }
+
+    .content {
+      max-width: 800px;
+      color: #6b7280;
+      line-height: 2;
+      font-size: 16px;
+    }
+
+    .side-text {
+      position: fixed;
+      right: 36px;
+      top: 120px;
+      writing-mode: vertical-rl;
+      font-size: 56px;
+      font-weight: 800;
+      color: rgba(185, 28, 28, 0.08);
+      letter-spacing: 4px;
+    }
+
+    .left-bar {
+      position: fixed;
+      left: 76px;
+      top: 320px;
+      width: 18px;
+      height: 240px;
+      background: #b91c1c;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="navbar">
+    <a class="logo" href="index.html">
+      <img src="assets/umcssa_logo.png" alt="UMCSSA Logo">
+      <span>UMCSSA Platform</span>
+    </a>
+
+    <nav class="nav">
+      <a href="checkin.html">活动签到</a>
+      <a href="#">接机申请</a>
+    </nav>
+  </header>
+
+  <div class="side-text">UMCSSA</div>
+  <div class="left-bar"></div>
+
+  <main class="hero">
+    <div class="label">OUR PLATFORM</div>
+
+    <h1 class="title">
+      让学生组织管理<br />
+      更高效、更清晰
+    </h1>
+
+    <div class="section-title">关于 UMCSSA Platform</div>
+
+    <p class="content">
+      UMCSSA Platform 是一个为密西根大学中国学生学者联合会设计的活动管理系统，
+      用于支持新生见面会签到、接机报名、志愿者管理、报销流程与数据统计。
+      平台旨在减少重复人工操作，提高活动组织效率，并为参与者提供更顺畅的体验。
+    </p>
+  </main>
 </body>
 </html>
