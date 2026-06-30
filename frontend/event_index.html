@@ -41,6 +41,11 @@
       width: auto;
     }
 
+    .nav {
+      display: flex;
+      align-items: center;
+    }
+
     .nav a {
       margin-left: 48px;
       text-decoration: none;
@@ -52,6 +57,28 @@
     .nav a.active {
       color: #b91c1c;
       font-weight: 600;
+    }
+
+    .lang-switch {
+      margin-left: 48px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #9ca3af;
+      font-size: 14px;
+    }
+
+    .lang-switch button {
+      border: none;
+      background: transparent;
+      color: #6b7280;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 4px 6px;
+    }
+
+    .lang-switch button:hover {
+      color: #b91c1c;
     }
 
     .page {
@@ -76,6 +103,7 @@
       -webkit-background-clip: text;
       color: transparent;
       margin-bottom: 56px;
+      white-space: pre-line;
     }
 
     .event-section {
@@ -136,6 +164,7 @@
       font-weight: 700;
       background: #fee2e2;
       color: #991b1b;
+      white-space: nowrap;
     }
 
     .side-text {
@@ -168,8 +197,14 @@
     </a>
 
     <nav class="nav">
-      <a class="active" href="event_index.html">活动签到</a>
-      <a href="#">接机申请</a>
+      <a id="navCheckin" class="active" href="event_index.html">活动签到</a>
+      <a id="navPickup" href="#">接机申请</a>
+
+      <div class="lang-switch">
+        <button onclick="setLanguage('zh')">中文</button>
+        <span>/</span>
+        <button onclick="setLanguage('en')">EN</button>
+      </div>
     </nav>
   </header>
 
@@ -177,42 +212,73 @@
   <div class="left-bar"></div>
 
   <main class="page">
-    <div class="label">EVENT CHECK-IN</div>
+    <div id="eventLabel" class="label">EVENT CHECK-IN</div>
 
-    <h1 class="title">
-      请选择活动<br />
-      进入签到界面
-    </h1>
+    <h1 id="eventIndexTitle" class="title">请选择活动
+进入签到界面</h1>
 
     <section class="event-section">
-      <h2>当前活动</h2>
+      <h2 id="currentEvents">当前活动</h2>
 
       <a class="event-card active-card" href="checkin.html?event=beijing">
         <div>
-          <div class="event-name">2026 年新生见面会（北京场）</div>
-          <div class="event-desc">点击进入北京场签到界面</div>
+          <div id="beijingEvent" class="event-name">2026 年新生见面会（北京场）</div>
+          <div id="enterBeijing" class="event-desc">点击进入北京场签到界面</div>
         </div>
-        <span class="event-status">开放中</span>
+        <span id="openEvent" class="event-status">开放中</span>
       </a>
 
-      <h2>未来活动</h2>
+      <h2 id="futureEvents">未来活动</h2>
 
       <div class="event-card disabled-card">
         <div>
-          <div class="event-name">2026 年新生见面会（深圳场）</div>
-          <div class="event-desc">暂未开放</div>
+          <div id="shenzhenEvent" class="event-name">2026 年新生见面会（深圳场）</div>
+          <div id="notOpenShenzhen" class="event-desc">暂未开放</div>
         </div>
-        <span class="event-status">未开放</span>
+        <span id="closedEventShenzhen" class="event-status">未开放</span>
       </div>
 
       <div class="event-card disabled-card">
         <div>
-          <div class="event-name">2027 年春节迎新晚会</div>
-          <div class="event-desc">暂未开放</div>
+          <div id="galaEvent" class="event-name">2027 年春节迎新晚会</div>
+          <div id="notOpenGala" class="event-desc">暂未开放</div>
         </div>
-        <span class="event-status">未开放</span>
+        <span id="closedEventGala" class="event-status">未开放</span>
       </div>
     </section>
   </main>
+
+  <script src="i18n.js"></script>
+
+  <script>
+    function applyLanguage() {
+      const lang = getLang();
+      const t = translations[lang];
+
+      document.documentElement.lang = lang;
+
+      document.getElementById("navCheckin").innerText = t.navCheckin;
+      document.getElementById("navPickup").innerText = t.navPickup;
+
+      document.getElementById("eventLabel").innerText = t.eventLabel;
+      document.getElementById("eventIndexTitle").innerText = t.eventIndexTitle;
+      document.getElementById("currentEvents").innerText = t.currentEvents;
+      document.getElementById("futureEvents").innerText = t.futureEvents;
+
+      document.getElementById("beijingEvent").innerText = t.beijingEvent;
+      document.getElementById("enterBeijing").innerText = t.enterBeijing;
+      document.getElementById("openEvent").innerText = t.openEvent;
+
+      document.getElementById("shenzhenEvent").innerText = t.shenzhenEvent;
+      document.getElementById("notOpenShenzhen").innerText = t.notOpen;
+      document.getElementById("closedEventShenzhen").innerText = t.closedEvent;
+
+      document.getElementById("galaEvent").innerText = t.galaEvent;
+      document.getElementById("notOpenGala").innerText = t.notOpen;
+      document.getElementById("closedEventGala").innerText = t.closedEvent;
+    }
+
+    applyLanguage();
+  </script>
 </body>
 </html>

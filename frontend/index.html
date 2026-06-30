@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>UMCSSA Platform</title>
+
   <style>
     body {
       margin: 0;
@@ -40,6 +41,11 @@
       width: auto;
     }
 
+    .nav {
+      display: flex;
+      align-items: center;
+    }
+
     .nav a {
       margin-left: 48px;
       text-decoration: none;
@@ -48,6 +54,26 @@
     }
 
     .nav a:hover {
+      color: #b91c1c;
+    }
+
+    .lang-switch {
+      margin-left: 48px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .lang-switch button {
+      border: none;
+      background: transparent;
+      color: #6b7280;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 4px 6px;
+    }
+
+    .lang-switch button:hover {
       color: #b91c1c;
     }
 
@@ -73,6 +99,7 @@
       -webkit-background-clip: text;
       color: transparent;
       margin-bottom: 80px;
+      white-space: pre-line;
     }
 
     .section-title {
@@ -118,8 +145,14 @@
     </a>
 
     <nav class="nav">
-      <a href="checkin.html">活动签到</a>
-      <a href="#">接机申请</a>
+      <a id="navCheckin" href="event_index.html">活动签到</a>
+      <a id="navPickup" href="#">接机申请</a>
+
+      <div class="lang-switch">
+        <button onclick="setLanguage('zh')">中文</button>
+        <span>/</span>
+        <button onclick="setLanguage('en')">EN</button>
+      </div>
     </nav>
   </header>
 
@@ -127,20 +160,38 @@
   <div class="left-bar"></div>
 
   <main class="hero">
-    <div class="label">OUR PLATFORM</div>
+    <div id="platformLabel" class="label">OUR PLATFORM</div>
 
-    <h1 class="title">
-      让学生组织管理<br />
-      更高效、更清晰
-    </h1>
+    <h1 id="homeTitle" class="title">让学生组织管理
+更高效、更清晰</h1>
 
-    <div class="section-title">关于 UMCSSA Platform</div>
+    <div id="aboutTitle" class="section-title">关于 UMCSSA Platform</div>
 
-    <p class="content">
+    <p id="aboutText" class="content">
       UMCSSA Platform 是一个为密西根大学中国学生学者联合会设计的活动管理系统，
       用于支持新生见面会签到、接机报名、志愿者管理、报销流程与数据统计。
       平台旨在减少重复人工操作，提高活动组织效率，并为参与者提供更顺畅的体验。
     </p>
   </main>
+
+  <script src="i18n.js"></script>
+
+  <script>
+    function applyLanguage() {
+      const lang = getLang();
+      const t = translations[lang];
+
+      document.documentElement.lang = lang;
+
+      document.getElementById("navCheckin").innerText = t.navCheckin;
+      document.getElementById("navPickup").innerText = t.navPickup;
+      document.getElementById("platformLabel").innerText = t.platformLabel;
+      document.getElementById("homeTitle").innerText = t.homeTitle;
+      document.getElementById("aboutTitle").innerText = t.aboutTitle;
+      document.getElementById("aboutText").innerText = t.aboutText;
+    }
+
+    applyLanguage();
+  </script>
 </body>
 </html>

@@ -28,16 +28,19 @@ EMAIL_COL = "UM邮箱"
 NAME_COL = "中文名"
 CHECKED_IN_COL = "签到"
 CHECKIN_TIME_COL = "签到时间"
-GUEST_CHECKIN_COL = "随行人员签到"
+GUEST_CHECKIN_COL = "随行签到"
+
 
 class CheckInRequest(BaseModel):
     event_id: str
     email: str
     guest_count: int
 
+
 @app.get("/")
 def home():
     return {"message": "UMCSSA Platform API is running."}
+
 
 @app.post("/checkin")
 def checkin(req: CheckInRequest):

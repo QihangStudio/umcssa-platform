@@ -41,6 +41,11 @@
       width: auto;
     }
 
+    .nav {
+      display: flex;
+      align-items: center;
+    }
+
     .nav a {
       margin-left: 48px;
       text-decoration: none;
@@ -52,6 +57,28 @@
     .nav a.active {
       color: #b91c1c;
       font-weight: 600;
+    }
+
+    .lang-switch {
+      margin-left: 48px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #9ca3af;
+      font-size: 14px;
+    }
+
+    .lang-switch button {
+      border: none;
+      background: transparent;
+      color: #6b7280;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 4px 6px;
+    }
+
+    .lang-switch button:hover {
+      color: #b91c1c;
     }
 
     .page {
@@ -76,6 +103,7 @@
       -webkit-background-clip: text;
       color: transparent;
       margin-bottom: 56px;
+      white-space: pre-line;
     }
 
     .card {
@@ -114,7 +142,7 @@
       box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.12);
     }
 
-    button {
+    .primary-button {
       width: 100%;
       padding: 14px 20px;
       border: none;
@@ -126,7 +154,7 @@
       cursor: pointer;
     }
 
-    button:hover {
+    .primary-button:hover {
       background: #991b1b;
     }
 
@@ -176,8 +204,14 @@
     </a>
 
     <nav class="nav">
-      <a class="active" href="checkin.html">活动签到</a>
-      <a href="#">接机申请</a>
+      <a id="navCheckin" class="active" href="event_index.html">活动签到</a>
+      <a id="navPickup" href="#">接机申请</a>
+
+      <div class="lang-switch">
+        <button onclick="setLanguage('zh')">中文</button>
+        <span>/</span>
+        <button onclick="setLanguage('en')">EN</button>
+      </div>
     </nav>
   </header>
 
@@ -185,50 +219,80 @@
   <div class="left-bar"></div>
 
   <main class="page">
-    <div class="label">EVENT CHECK-IN</div>
+    <div id="eventLabel" class="label">EVENT CHECK-IN</div>
 
     <h1 class="title" id="eventTitle">UMCSSA 活动签到系统</h1>
 
     <section class="card">
       <div class="form-group">
-        <label for="email">UM 电子邮箱</label>
+        <label id="emailLabel" for="email">UM 电子邮箱</label>
         <input id="email" type="email" placeholder="abc123@umich.edu" />
       </div>
 
       <div class="form-group">
-        <label for="guestCount">实际随行人员数量</label>
+        <label id="guestLabel" for="guestCount">实际随行人员数量</label>
         <input id="guestCount" type="number" min="0" max="1" value="0" />
       </div>
 
-      <button onclick="checkIn()">签到</button>
+      <button id="checkinButton" class="primary-button" onclick="checkIn()">签到</button>
 
       <p id="result"></p>
 
-      <a class="back-link" href="index.html">← 回到活动列表</a>
+      <a id="backToEvents" class="back-link" href="event_index.html">← 回到活动列表</a>
     </section>
   </main>
+
+  <script src="i18n.js"></script>
 
   <script>
     const params = new URLSearchParams(window.location.search);
     const eventId = params.get("event");
 
     const eventNames = {
-      beijing: "2026 新生见面会（北京场）",
-      shanghai: "2026 新生见面会（上海场）",
-      shenzhen: "2026 新生见面会（深圳场）",
-      spring_festival_gala: "春晚签到"
+      zh: {
+        beijing: "2026 新生见面会（北京场）",
+        shanghai: "2026 新生见面会（上海场）",
+        shenzhen: "2026 新生见面会（深圳场）",
+        spring_festival_gala: "春晚签到",
+        default: "UMCSSA 活动签到系统"
+      },
+      en: {
+        beijing: "2026 New Student Meet & Greet (Beijing Session)",
+        shanghai: "2026 New Student Meet & Greet (Shanghai Session)",
+        shenzhen: "2026 New Student Meet & Greet (Shenzhen Session)",
+        spring_festival_gala: "Spring Festival Gala Check-in",
+        default: "UMCSSA Event Check-in"
+      }
     };
 
-    document.getElementById("eventTitle").innerText =
-      eventNames[eventId] || "UMCSSA 活动签到系统";
+    function applyLanguage() {
+      const lang = getLang();
+      const t = translations[lang];
+
+      document.documentElement.lang = lang;
+
+      document.getElementById("navCheckin").innerText = t.navCheckin;
+      document.getElementById("navPickup").innerText = t.navPickup;
+      document.getElementById("eventLabel").innerText = t.eventLabel;
+      document.getElementById("emailLabel").innerText = t.emailLabel;
+      document.getElementById("guestLabel").innerText = t.guestLabel;
+      document.getElementById("checkinButton").innerText = t.checkinButton;
+      document.getElementById("backToEvents").innerText = t.backToEvents;
+
+      document.getElementById("eventTitle").innerText =
+        eventNames[lang][eventId] || eventNames[lang].default;
+    }
 
     async function checkIn() {
+      const lang = getLang();
+      const t = translations[lang];
+
       const email = document.getElementById("email").value.trim();
       const guestCount = Number(document.getElementById("guestCount").value);
       const result = document.getElementById("result");
 
       if (!email) {
-        result.innerText = "请输入您的 UM 电子邮箱。";
+        result.innerText = t.enterEmail;
         return;
       }
 
@@ -248,17 +312,26 @@
         const data = await response.json();
 
         if (data.success) {
-          result.innerText = `${data.message}
+          if (lang === "zh") {
+            result.innerText = `✅ 签到成功
 欢迎参会，${data.name}。
 实际随行人员数量：${data.guest_count}
 总入场人数：${data.total_count}`;
+          } else {
+            result.innerText = `Check-in successful
+Welcome, ${data.name}.
+Actual guest count: ${data.guest_count}
+Total admission count: ${data.total_count}`;
+          }
         } else {
           result.innerText = `${data.message}`;
         }
       } catch (error) {
-        result.innerText = "服务器连接失败，请联系现场工作人员。";
+        result.innerText = t.serverError;
       }
     }
+
+    applyLanguage();
   </script>
 </body>
 </html>
