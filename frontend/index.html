@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>UMCSSA 签到系统</title>
+</head>
+<body>
+  <h1>2026 UMCSSA 新生见面会（北京场）签到</h1>
+
+  <p>请输入您的 UM 电子邮箱。</p>
+
+  <input id="email" type="email" placeholder="abc123@umich.edu" />
+  <button onclick="checkIn()">签到</button>
+
+  <p id="result"></p>
+
+  <script>
+    async function checkIn() {
+      const email = document.getElementById("email").value;
+      const result = document.getElementById("result");
+
+      if (!email) {
+        result.innerText = "请输入您的 UM 电子邮箱。";
+        return;
+      }
+
+      try {
+        const response = await fetch("http://127.0.0.1:8000/checkin", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email: email })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          result.innerText = `✅ ${data.message} 欢迎参会，${data.name}。`;
+        } else {
+          result.innerText = `❌ ${data.message}`;
+        }
+      } catch (error) {
+        result.innerText = "服务器故障，请重试。";
+      }
+    }
+  </script>
+</body>
+</html>
